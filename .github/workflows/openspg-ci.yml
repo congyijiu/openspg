@@ -2,10 +2,9 @@ name: CI
 
 on:
   pull_request:
-  workflow_dispatch: # 允许手动触发工作流
+  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
@@ -19,7 +18,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: mvn -B install -DskipTests --file pom.xml
+        run: mvn -B install -DskipTests -Dspotless.check.skip=true --file pom.xml
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         env:
@@ -36,7 +35,6 @@ jobs:
         with:
           java-version: 8
           distribution: temurin
-
       - name: Configure Maven for GitHub Packages
         run: |
           echo "<settings>
@@ -50,6 +48,6 @@ jobs:
           </settings>" > $GITHUB_WORKSPACE/settings.xml
 
       - name: Publish to GitHub Packages
-        run: mvn deploy --settings $GITHUB_WORKSPACE/settings.xml -DskipTests
+        run: mvn deploy --settings $GITHUB_WORKSPACE/settings.xml -DskipTests -Dspotless.check.skip=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

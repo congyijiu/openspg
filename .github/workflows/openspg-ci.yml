@@ -10,6 +10,7 @@ name: CI
 
 on:
   pull_request:
+  workflow_dispatch: # 允许手动触发工作流
 
 jobs:
   build:
